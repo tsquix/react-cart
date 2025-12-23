@@ -1,23 +1,38 @@
-import React, { createContext, ReactNode, useEffect, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import axios from "axios";
 import { CartContextType, Children, Product } from "../types/types";
 
 export const CartContext = createContext<CartContextType | null>(null);
 
+function isNumberArray(value: unknown): value is number[] {
+  return (
+    Array.isArray(value) && value.every((item) => typeof item === "number")
+  );
+}
+
 export function CartContextProvider({ children }: Children) {
   const [products, setProducts] = useState<Product[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   useEffect(() => {
     const fetchProducts = async () => {
+      setIsLoading(true);
       try {
         const res = await axios.get("https://fakestoreapi.com/products");
+        if (Array.isArray(res.data) && res.data.length === 0) {
+          setProducts([]);
+          return;
+        }
         setProducts(res.data);
+        setIsLoading(false);
       } catch (err) {
         setError("Nie udało się pobrać produktów");
+        setIsLoading(false);
       }
     };
     fetchProducts();
   }, []);
+
   const ls = typeof window !== "undefined" ? window.localStorage : null;
   const [cartProducts, setCartProducts] = useState<number[]>([]);
 
@@ -28,14 +43,24 @@ export function CartContextProvider({ children }: Children) {
   }, [cartProducts]);
 
   useEffect(() => {
-    if (ls && ls.getItem("cart")) {
-      setCartProducts(JSON.parse(ls.getItem("cart") as any));
+    const raw = localStorage.getItem("cart");
+    if (!raw) return;
+
+    try {
+      const parsed = JSON.parse(raw);
+
+      if (isNumberArray(parsed)) {
+        setCartProducts(parsed);
+      } else {
+        console.error("Nieprawidlowy format koszyka");
+      }
+    } catch (e) {
+      console.error("Blad parsowania koszyka", e);
     }
   }, []);
 
   const addToCart = (id: number) => {
     setCartProducts((prev) => [...prev, id]);
-    //   console.log(cartState);
   };
   const getProductCount = (id: number): number => {
     return cartProducts.filter((itemId) => itemId === id).length;
@@ -66,6 +91,7 @@ export function CartContextProvider({ children }: Children) {
         setCartProducts,
         addToCart,
         deleteFromCart,
+        isLoading,
       }}
     >
       {children}

@@ -1,26 +1,24 @@
-import React, { useContext } from "react";
 import { Link } from "react-router-dom";
-import { CartContext } from "../contexts/CartContext";
 import { useCart } from "../hooks/useCart";
 
 const Header = () => {
   const { cartProducts } = useCart();
   return (
-    <div className="sticky top-0 z-50 bg-gray-200 shadow-xl p-4">
+    <header className="sticky top-0 z-50 bg-gray-200 shadow-xl p-4">
       <div className="flex justify-between items-center max-w-7xl mx-auto gap-12">
-        <div className="flex gap-6">
+        <nav className="flex gap-6">
           <Link to="/" className="hover:opacity-70">
             Home
           </Link>
           <Link to="/products" className="hover:opacity-70">
             Products
           </Link>
-        </div>
+        </nav>
 
         <div className="relative">
-          <div className="absolute -top-2 -right-2 rounded-full px-1.5 text-xs bg-red-500 text-white">
+          <span className="absolute -top-2 -right-2 rounded-full px-1.5 text-xs bg-red-500 text-white">
             {cartProducts?.length || 0}
-          </div>
+          </span>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -37,7 +35,7 @@ const Header = () => {
           </svg>
         </div>
       </div>
-    </div>
+    </header>
   );
 };
 

@@ -8,9 +8,6 @@ const Home = () => {
   const { products, error } = useCart();
   const [randomProduct, setRandomProduct] = useState<Product | null>(null);
 
-  useEffect(() => {
-    console.log(products);
-  }, [products]);
   const getRandomProduct = (): Product | null => {
     if (products.length === 0) return null;
 
@@ -30,11 +27,15 @@ const Home = () => {
           <p className="text-red-500 text-lg">{error}</p>
         </div>
       ) : products.length > 0 ? (
-        <div className="flex w-full mx-auto max-w-7xl flex-col">
-          <div className="flex flex-col gap-8 items-center w-full">
-            {randomProduct && <ProductCard product={randomProduct} />}
-          </div>
-        </div>
+        <>
+          {randomProduct && (
+            <div className="flex w-full mx-auto max-w-7xl flex-col">
+              <ul className="flex justify-center">
+                <ProductCard key={randomProduct.id} product={randomProduct} />
+              </ul>
+            </div>
+          )}
+        </>
       ) : (
         <LoadingSpinner />
       )}

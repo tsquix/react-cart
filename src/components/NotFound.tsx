@@ -1,4 +1,4 @@
-import React from "react";
+import { Link } from "react-router-dom";
 
 const NotFound = () => {
   return (
@@ -7,7 +7,7 @@ const NotFound = () => {
       <div>
         <p className="mb-1">wróć na stronę główną:</p>
         <button className="px-2 py-1 bg-gray-200 rounded-lg hover:opacity-80">
-          <a href="/">Strona glowna</a>
+          <Link to="/">Strona glowna</Link>
         </button>
       </div>
     </div>

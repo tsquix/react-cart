@@ -24,4 +24,5 @@ export type CartContextType = {
   addToCart: (id: number) => void;
   deleteFromCart: (id: number) => void;
   error: string | null;
+  isLoading: boolean;
 };
